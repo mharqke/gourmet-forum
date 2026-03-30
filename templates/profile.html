@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - Форум гурманов</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">Форум гурманов</a>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <div class="dropdown">
+                        <button class="nav-link dropbtn" id="menuBtn">Меню</button>
+                        <div class="dropdown-content" id="menuDropdown">
+                            <div class="dropdown-section">
+                                <span class="dropdown-section-title">🍲 Рецепты</span>
+                                <a href="topics.html?category=recipes&subcategory=home">Домашняя еда</a>
+                                <a href="topics.html?category=recipes&subcategory=cold">Холодные блюда</a>
+                                <a href="topics.html?category=recipes&subcategory=hot">Горячие блюда</a>
+                                <a href="topics.html?category=recipes&subcategory=desserts">Десерты</a>
+                                <a href="topics.html?category=recipes&subcategory=baking">Выпечка</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <span class="dropdown-section-title">🍷 Обсуждения</span>
+                                <a href="topics.html?category=discussions&subcategory=restaurants">Рестораны и кафе</a>
+                                <a href="topics.html?category=discussions&subcategory=products">Продукты</a>
+                                <a href="topics.html?category=discussions&subcategory=kitchen">Кухонная техника</a>
+                                <a href="topics.html?category=discussions&subcategory=events">Гастро-события</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <span class="dropdown-section-title">❓ Вопрос-ответ</span>
+                                <a href="topics.html?category=qa&subcategory=cooking">Приготовление</a>
+                                <a href="topics.html?category=qa&subcategory=ingredients">Ингредиенты</a>
+                                <a href="topics.html?category=qa&subcategory=substitutes">Замена продуктов</a>
+                                <a href="topics.html?category=qa&subcategory=storage">Хранение</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <span class="dropdown-section-title">🏷️ Теги</span>
+                                <a href="tags.html">Все теги</a>
+                                <a href="tag.html?id=пицца">#пицца</a>
+                                <a href="tag.html?id=паста">#паста</a>
+                                <a href="tag.html?id=десерт">#десерт</a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="about.html" class="nav-link">О проекте</a>
+                    <a href="tags.html" class="nav-link">Теги</a>
+                </nav>
+                <div class="auth-section">
+                    <a href="profile.html" class="auth-btn user-profile-btn" id="authBtn">
+                        <span class="user-avatar" id="avatarLetter">Е</span>
+                        <span id="usernameDisplay">{{ user.username }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="profile-header">
+            <!-- Аватар в виде первой буквы имени -->
+            <div class="profile-avatar" id="profileAvatar">
+                <span id="avatarInitial">Е</span>
+            </div>
+            <div class="profile-info">
+                <h1>{{ user.username }}</h1>
+                <p class="meta">На форуме с: {{ user.created_at.strftime('%d.%m.%Y') }}</p>
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <span class="stat-value">{{ liked_posts }}</span>
+                        <span class="stat-label">лайков</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">{{ post_count }}</span>
+                        <span class="stat-label">постов</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">{{ comment_count }}</span>
+                        <span class="stat-label">комментариев</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">234</span>
+                        <span class="stat-label">подписчиков</span>
+                    </div>
+                </div>
+                <div class="profile-extra">
+                    <p><strong>📍 Город:</strong>{{ user.city or 'Город не указан' }}</p>
+                    <p><strong>📝 О себе:</strong>{{ user.bio or 'О себе пока ничего нет...' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-tabs">
+            <a href="#" class="active tab" onclick="switchTab('posts'); return false;">📝 Мои посты</a>
+            <a href="#" class="tab" onclick="switchTab('liked'); return false;">❤️ Понравившееся</a>
+            <a href="#" class="tab" onclick="switchTab('subscribers'); return false;">👥 Подписчики</a>
+            <a href="#" class="tab" onclick="switchTab('settings'); return false;">⚙️ Настройки</a>
+        </div>
+
+        <div id="posts-tab">
+            <div class="posts-header">
+                <h2>Мои посты</h2>
+                <a href="new_topic.html" class="btn">➕ Новый пост</a>
+            </div>
+            
+            {% for post in posts %}
+            <div class="post-card">
+                <div class="post-header">
+                    <a href="topic.html" class="post-title">{{ post.title }}</a>
+                    <span class="post-status status-published">✓ Опубликовано</span>
+                </div>
+                <div class="post-meta">
+                    <span>📅 {{ post.created_at.strftime('%H:%M %d.%m.%y') }}</span>
+                    <span>📂 {{ post.category }}</a></span>
+                </div>
+                <p>{{ post.content[:100]}}...</p>
+                <div class="post-footer">
+                    <div class="post-stats">
+                        <span>💬 12 комментариев</span>
+                        <span>❤️ 24 лайка</span>
+                    </div>
+                    <div class="post-actions">
+                        <a href="#" onclick="alert('Демо-режим: удаление поста'); return false;" class="delete-link">🗑️ Удалить</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            
+            <div class="post-card demo-post">
+                <div class="post-header">
+                    <a href="topic.html" class="post-title">🍕 Бабушкина пицца на тонком тесте</a>
+                    <span class="post-status status-published">✓ Опубликовано</span>
+                </div>
+                <div class="post-meta">
+                    <span>📅 2 дня назад</span>
+                    <span>📂 <a href="topics.html?category=recipes&subcategory=home" class="post-category-link">Рецепты / Домашняя еда</a></span>
+                </div>
+                <p class="post-excerpt">Делюсь проверенным рецептом теста, которое всегда получается хрустящим. Ингредиенты самые простые, а результат — как в лучшей пиццерии!</p>
+                <div class="post-tags">
+                    <a href="tag.html" class="tag">#пицца</a>
+                    <a href="tag.html" class="tag">#итальянская</a>
+                    <a href="tag.html" class="tag">#тесто</a>
+                    <a href="tag.html" class="tag">#выпечка</a>
+                </div>
+                <div class="post-footer">
+                    <div class="post-stats">
+                        <span>💬 12 комментариев</span>
+                        <span>❤️ 24 лайка</span>
+                    </div>
+                    <div class="post-actions">
+                        <a href="#" onclick="alert('Демо-режим: удаление поста'); return false;" class="delete-link">🗑️ Удалить</a>
+                    </div>
+                </div>
+            </div>
+            <!--
+            <div class="post-card demo-post">
+                <div class="post-header">
+                    <a href="topic.html" class="post-title">🍣 Домашние роллы: эксперимент</a>
+                    <span class="post-status status-published">✓ Опубликовано</span>
+                </div>
+                <div class="post-meta">
+                    <span>📅 3 часа назад</span>
+                    <span>📂 <a href="topics.html?category=recipes&subcategory=asian" class="post-category-link">Рецепты / Азиатская кухня</a></span>
+                </div>
+                <p class="post-excerpt">Пробую новый рецепт риса для суши. Пока в процессе, скоро допишу...</p>
+                <div class="post-tags">
+                    <a href="tag.html" class="tag">#суши</a>
+                    <a href="tag.html" class="tag">#роллы</a>
+                    <a href="tag.html" class="tag">#японская</a>
+                </div>
+                <div class="post-footer">
+                    <div class="post-stats">
+                        <span>💬 0 комментариев</span>
+                        <span>❤️ 0 лайков</span>
+                    </div>
+                    <div class="post-actions">
+                        <a href="#" onclick="alert('Демо-режим: удаление черновика'); return false;" class="delete-link">🗑️ Удалить</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-card demo-post">
+                <div class="post-header">
+                    <a href="topic.html" class="post-title">🥘 Паста карбонара без сливок</a>
+                    <span class="post-status status-published">✓ Опубликовано</span>
+                </div>
+                <div class="post-meta">
+                    <span>📅 неделю назад</span>
+                    <span>📂 <a href="topics.html?category=recipes&subcategory=home" class="post-category-link">Рецепты / Горячие блюда</a></span>
+                </div>
+                <p class="post-excerpt">Настоящая итальянская карбонара делается без сливок! Только яйца, сыр, гуанчиале. Рассказываю все секреты приготовления...</p>
+                <div class="post-tags">
+                    <a href="tag.html" class="tag">#паста</a>
+                    <a href="tag.html" class="tag">#карбонара</a>
+                    <a href="tag.html" class="tag">#итальянская</a>
+                </div>
+                <div class="post-footer">
+                    <div class="post-stats">
+                        <span>💬 31 комментарий</span>
+                        <span>❤️ 47 лайков</span>
+                    </div>
+                    <div class="post-actions">
+                        <a href="#" onclick="alert('Демо-режим: удаление поста'); return false;" class="delete-link">🗑️ Удалить</a>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+
+        <div id="liked-tab" style="display: none;">
+            <h2 class="comments-title">Понравившиеся посты</h2>
+            <div class="post-card">
+                <div class="post-header">
+                    <a href="topic.html" class="post-title">🍰 Тирамису по-домашнему</a>
+                    <span class="post-status status-published">✓ Опубликовано</span>
+                </div>
+                <div class="post-meta">
+                    <span>Автор: <a href="profile.html" class="post-category-link">Мария_кондитер</a></span>
+                    <span>📅 3 дня назад</span>
+                </div>
+                <p class="post-excerpt">Нежный итальянский десерт, который легко приготовить дома. Секрет в правильном сыре маскарпоне...</p>
+                <div class="post-footer">
+                    <div class="post-stats">
+                        <span>❤️ 56 лайков</span>
+                        <span>💬 12 комментариев</span>
+                    </div>
+                </div>
+            </div>
+            <div class="post-card">
+                <div class="post-header">
+                    <a href="topic.html" class="post-title">🔥 Острые куриные крылышки</a>
+                    <span class="post-status status-published">✓ Опубликовано</span>
+                </div>
+                <div class="post-meta">
+                    <span>Автор: <a href="profile.html" class="post-category-link">Гриль_мастер</a></span>
+                    <span>📅 неделю назад</span>
+                </div>
+                <p class="post-excerpt">Идеальный рецепт для пикника. Маринад на основе соуса табаско и меда...</p>
+                <div class="post-footer">
+                    <div class="post-stats">
+                        <span>❤️ 89 лайков</span>
+                        <span>💬 23 комментария</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="subscribers-tab" style="display: none;">
+            <h2 class="comments-title">Мои подписчики</h2>
+            <div class="subscribers-grid">
+                <div class="subscriber-card">
+                    <div class="subscriber-avatar">А</div>
+                    <div class="subscriber-info">
+                        <strong>Антон_шеф</strong><br>
+                        <small>Подписан с 10 марта 2024</small>
+                    </div>
+                </div>
+                <div class="subscriber-card">
+                    <div class="subscriber-avatar">М</div>
+                    <div class="subscriber-info">
+                        <strong>Мама_Оля</strong><br>
+                        <small>Подписана с 15 марта 2024</small>
+                    </div>
+                </div>
+                <div class="subscriber-card">
+                    <div class="subscriber-avatar">С</div>
+                    <div class="subscriber-info">
+                        <strong>Сушист_Паша</strong><br>
+                        <small>Подписан с 20 марта 2024</small>
+                    </div>
+                </div>
+                <div class="subscriber-card">
+                    <div class="subscriber-avatar">К</div>
+                    <div class="subscriber-info">
+                        <strong>Кондитер_Лена</strong><br>
+                        <small>Подписана с 22 марта 2024</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-tab" style="display: none;">
+            <h2 class="comments-title">Настройки профиля</h2>
+            <div class="card">
+                <h3>Основная информация</h3>
+                <form onsubmit="alert('Демо-режим: настройки сохранены'); return false;">
+                    <div class="form-group">
+                        <label for="display-name">Отображаемое имя</label>
+                        <input type="text" id="display-name" class="form-control" value="Елена_повар">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-bio">О себе</label>
+                        <textarea id="user-bio" class="form-control" rows="4">Люблю экспериментировать на кухне. Особенно удаются пицца и паста. Делюсь только проверенными рецептами!</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-city">Город</label>
+                        <input type="text" id="user-city" class="form-control" value="Санкт-Петербург">
+                    </div>
+                    <button type="submit" class="btn">Сохранить изменения</button>
+                </form>
+            </div>
+            <div class="card mt-30">
+                <h3>Безопасность</h3>
+                <form onsubmit="alert('Демо-режим: пароль изменен'); return false;">
+                    <div class="form-group">
+                        <label for="current-password">Текущий пароль</label>
+                        <input type="password" id="current-password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">Новый пароль</label>
+                        <input type="password" id="new-password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Подтвердите пароль</label>
+                        <input type="password" id="confirm-password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn">Изменить пароль</button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Форум гурманов. Просто о вкусном.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.getElementById('menuBtn');
+            const menuDropdown = document.getElementById('menuDropdown');
+            if (menuBtn && menuDropdown) {
+                menuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menuDropdown.classList.toggle('show');
+                });
+                document.addEventListener('click', function(e) {
+                    if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+                        menuDropdown.classList.remove('show');
+                    }
+                });
+                menuDropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+            
+        });
+
+        function switchTab(tabName) {
+            document.getElementById('posts-tab').style.display = 'none';
+            document.getElementById('liked-tab').style.display = 'none';
+            document.getElementById('subscribers-tab').style.display = 'none';
+            document.getElementById('settings-tab').style.display = 'none';
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            if (tabName === 'posts') {
+                document.getElementById('posts-tab').style.display = 'block';
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
+            } else if (tabName === 'liked') {
+                document.getElementById('liked-tab').style.display = 'block';
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+            } else if (tabName === 'subscribers') {
+                document.getElementById('subscribers-tab').style.display = 'block';
+                document.querySelector('.tab:nth-child(3)').classList.add('active');
+            } else if (tabName === 'settings') {
+                document.getElementById('settings-tab').style.display = 'block';
+                document.querySelector('.tab:nth-child(4)').classList.add('active');
+            }
+        }
+
+        function updateAuthButton() {
+            const authBtn = document.getElementById('authBtn');
+            const username = "{{ session.get('username', '') }}";
+            const isLoggedIn = username !== "";
+            if (isLoggedIn) {
+                authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0)}</span> ${username}`;
+                authBtn.href = 'profile.html';
+                authBtn.classList.add('user-profile-btn');
+            } else {
+                authBtn.innerHTML = 'Вход';
+                authBtn.href = 'login.html';
+                authBtn.classList.remove('user-profile-btn');
+            }
+        }
+        updateAuthButton();
+    </script>
+</body>
+</html>
