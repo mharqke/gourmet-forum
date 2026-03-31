@@ -10,53 +10,53 @@
     <header>
         <div class="container">
             <div class="header-content">
-                <a href="index.html" class="logo">Форум гурманов</a>
+                <a href="{{ url_for('home') }}" class="logo">Форум гурманов</a>
                 <nav class="main-nav">
-                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="{{ url_for('home') }}" class="nav-link">Главная</a>
                     <div class="dropdown">
                         <button class="nav-link dropbtn" id="menuBtn">Меню</button>
                         <div class="dropdown-content" id="menuDropdown">
                             <div class="dropdown-section">
-                                <span class="dropdown-section-title"></span>
-                                <a href="topics.html?category=recipes&subcategory=home">Домашняя еда</a>
-                                <a href="topics.html?category=recipes&subcategory=cold">Холодные блюда</a>
-                                <a href="topics.html?category=recipes&subcategory=hot">Горячие блюда</a>
-                                <a href="topics.html?category=recipes&subcategory=desserts">Десерты</a>
-                                <a href="topics.html?category=recipes&subcategory=baking">Выпечка</a>
+                                <span class="dropdown-section-title">🍲 Рецепты</span>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=home">Домашняя еда</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=cold">Холодные блюда</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=hot">Горячие блюда</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=desserts">Десерты</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=baking">Выпечка</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🍷 Обсуждения</span>
-                                <a href="topics.html?category=discussions&subcategory=restaurants">Рестораны и кафе</a>
-                                <a href="topics.html?category=discussions&subcategory=products">Продукты</a>
-                                <a href="topics.html?category=discussions&subcategory=kitchen">Кухонная техника</a>
-                                <a href="topics.html?category=discussions&subcategory=events">Гастро-события</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=restaurants">Рестораны и кафе</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=products">Продукты</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=kitchen">Кухонная техника</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=events">Гастро-события</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">❓ Вопрос-ответ</span>
-                                <a href="topics.html?category=qa&subcategory=cooking">Приготовление</a>
-                                <a href="topics.html?category=qa&subcategory=ingredients">Ингредиенты</a>
-                                <a href="topics.html?category=qa&subcategory=substitutes">Замена продуктов</a>
-                                <a href="topics.html?category=qa&subcategory=storage">Хранение</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=cooking">Приготовление</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=ingredients">Ингредиенты</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=substitutes">Замена продуктов</a>
+                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=storage">Хранение</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🏷️ Теги</span>
-                                <a href="tags.html">Все теги</a>
-                                <a href="tag.html?id=пицца">#пицца</a>
-                                <a href="tag.html?id=паста">#паста</a>
-                                <a href="tag.html?id=десерт">#десерт</a>
+                                <a href="{{ url_for('show_all_tags') }}">Все теги</a>
+                                <a href="{{ url_for('show_tag_posts', tag_id=1) }}">#пицца</a>
+                                <a href="{{ url_for('show_tag_posts', tag_id=2) }}">#паста</a>
+                                <a href="{{ url_for('show_tag_posts', tag_id=3) }}">#десерт</a>
                             </div>
                         </div>
                     </div>
-                    <a href="about.html" class="nav-link">О проекте</a>
-                    <a href="tags.html" class="nav-link">Теги</a>
+                    <a href="{{ url_for('serve_page', page='about.html') }}" class="nav-link">О проекте</a>
+                    <a href="{{ url_for('show_all_tags') }}" class="nav-link">Теги</a>
                 </nav>
                 <div class="auth-section">
                     {% if session.get('user_id') %}
-                        <a href="/profile.html" class="auth-btn">
-                            <span class="user-avatar">{{ session.username[0] }}</span> {{ session.username }}
+                        <a href="{{ url_for('profile') }}" class="auth-btn">
+                            <span class="user-avatar">{{ session.username[0].upper() }}</span> {{ session.username }}
                         </a>
                     {% else %}
-                        <a href="/login.html" class="auth-btn">Вход</a>
+                        <a href="{{ url_for('serve_page', page='login.html') }}" class="auth-btn">Вход</a>
                     {% endif %}
                 </div>
             </div>

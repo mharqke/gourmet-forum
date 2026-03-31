@@ -371,13 +371,13 @@ def show_all_tags():
         SELECT t.id, t.name, COUNT(tt.post_id) as post_count 
         FROM tags t
         LEFT JOIN thread_tags tt ON t.id = tt.tag_id
-        GROUP BY t.id
+        GROUP BY t.id, t.name
         ORDER BY post_count DESC
     """
     cursor.execute(query)
     all_tags = cursor.fetchall()
     conn.close()
-    
+    print('all_tags:',all_tags)
     return render_template('tags.html', tags=all_tags)
 
 # --- SINGLE TAG VIEW ROUTE ---
