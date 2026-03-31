@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Теги - Форум гурманов</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
 </head>
 <body>
     <header>
@@ -60,16 +61,11 @@
     <main class="container">
         <h1>Все теги</h1>
         <div class="tags-cloud">
-            <a href="tag.html?id=1" class="tag-cloud-item">#пицца (12)</a>
-            <a href="tag.html?id=2" class="tag-cloud-item">#паста (8)</a>
-            <a href="tag.html?id=3" class="tag-cloud-item">#десерт (15)</a>
-            <a href="tag.html?id=4" class="tag-cloud-item">#суп (7)</a>
-            <a href="tag.html?id=5" class="tag-cloud-item">#салат (10)</a>
-            <a href="tag.html?id=6" class="tag-cloud-item">#завтрак (6)</a>
-            <a href="tag.html?id=7" class="tag-cloud-item">#итальянская (14)</a>
-            <a href="tag.html?id=8" class="tag-cloud-item">#японская (5)</a>
-            <a href="tag.html?id=9" class="tag-cloud-item">#выпечка (11)</a>
-            <a href="tag.html?id=10" class="tag-cloud-item">#вегетарианское (4)</a>
+            {% for tag in tags %}
+                <a href="{{ url_for('show_tag_posts', tag_id=tag.id) }}" class="tag-cloud-item">
+                    #{{ tag.name }} ({{ tag.post_count }})
+                </a>
+            {% endfor %}
         </div>
     </main>
 

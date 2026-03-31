@@ -4,356 +4,180 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Просмотр поста - Форум гурманов</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo">Форум гурманов</a>
-                <nav class="main-nav">
-                    <a href="index.html" class="nav-link">Главная</a>
-                    <div class="dropdown">
-                        <button class="nav-link dropbtn" id="menuBtn">Меню</button>
-                        <div class="dropdown-content" id="menuDropdown">
-                            <div class="dropdown-section">
-                                <span class="dropdown-section-title">🍲 Рецепты</span>
-                                <a href="topics.html?category=recipes&subcategory=home">Домашняя еда</a>
-                                <a href="topics.html?category=recipes&subcategory=cold">Холодные блюда</a>
-                                <a href="topics.html?category=recipes&subcategory=hot">Горячие блюда</a>
-                                <a href="topics.html?category=recipes&subcategory=desserts">Десерты</a>
-                                <a href="topics.html?category=recipes&subcategory=baking">Выпечка</a>
-                            </div>
-                            <div class="dropdown-section">
-                                <span class="dropdown-section-title">🍷 Обсуждения</span>
-                                <a href="topics.html?category=discussions&subcategory=restaurants">Рестораны и кафе</a>
-                                <a href="topics.html?category=discussions&subcategory=products">Продукты</a>
-                                <a href="topics.html?category=discussions&subcategory=kitchen">Кухонная техника</a>
-                                <a href="topics.html?category=discussions&subcategory=events">Гастро-события</a>
-                            </div>
-                            <div class="dropdown-section">
-                                <span class="dropdown-section-title">❓ Вопрос-ответ</span>
-                                <a href="topics.html?category=qa&subcategory=cooking">Приготовление</a>
-                                <a href="topics.html?category=qa&subcategory=ingredients">Ингредиенты</a>
-                                <a href="topics.html?category=qa&subcategory=substitutes">Замена продуктов</a>
-                                <a href="topics.html?category=qa&subcategory=storage">Хранение</a>
-                            </div>
-                            <div class="dropdown-section">
-                                <span class="dropdown-section-title">🏷️ Теги</span>
-                                <a href="tags.html">Все теги</a>
-                                <a href="tag.html?id=пицца">#пицца</a>
-                                <a href="tag.html?id=паста">#паста</a>
-                                <a href="tag.html?id=десерт">#десерт</a>
+    <body>
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <a href="index.html" class="logo">Форум гурманов</a>
+                    <nav class="main-nav">
+                        <a href="index.html" class="nav-link">Главная</a>
+                        <div class="dropdown">
+                            <button class="nav-link dropbtn" id="menuBtn">Меню</button>
+                            <div class="dropdown-content" id="menuDropdown">
+                                <div class="dropdown-section">
+                                    <span class="dropdown-section-title">🍲 Рецепты</span>
+                                    <a href="topics.html?category=recipes&subcategory=home">Домашняя еда</a>
+                                    <a href="topics.html?category=recipes&subcategory=cold">Холодные блюда</a>
+                                    <a href="topics.html?category=recipes&subcategory=hot">Горячие блюда</a>
+                                    <a href="topics.html?category=recipes&subcategory=desserts">Десерты</a>
+                                    <a href="topics.html?category=recipes&subcategory=baking">Выпечка</a>
+                                </div>
+                                <div class="dropdown-section">
+                                    <span class="dropdown-section-title">🍷 Обсуждения</span>
+                                    <a href="topics.html?category=discussions&subcategory=restaurants">Рестораны и кафе</a>
+                                    <a href="topics.html?category=discussions&subcategory=products">Продукты</a>
+                                    <a href="topics.html?category=discussions&subcategory=kitchen">Кухонная техника</a>
+                                    <a href="topics.html?category=discussions&subcategory=events">Гастро-события</a>
+                                </div>
+                                <div class="dropdown-section">
+                                    <span class="dropdown-section-title">❓ Вопрос-ответ</span>
+                                    <a href="topics.html?category=qa&subcategory=cooking">Приготовление</a>
+                                    <a href="topics.html?category=qa&subcategory=ingredients">Ингредиенты</a>
+                                    <a href="topics.html?category=qa&subcategory=substitutes">Замена продуктов</a>
+                                    <a href="topics.html?category=qa&subcategory=storage">Хранение</a>
+                                </div>
+                                <div class="dropdown-section">
+                                    <span class="dropdown-section-title">🏷️ Теги</span>
+                                    <a href="/tags">Все теги</a>
+                                    <a href="/tag/1">#пицца</a>
+                                    <a href="/tag/2">#паста</a>
+                                    <a href="/tag/3">#десерт</a>
+                                </div>
                             </div>
                         </div>
+                        <a href="about.html" class="nav-link">О проекте</a>
+                        <a href="/tags" class="nav-link">Теги</a>
+                    </nav>
+                    <div class="auth-section">
+                        {% if session.get('user_id') %}
+                            <a href="/profile.html" class="auth-btn">
+                                <span class="user-avatar">{{ session.username[0] }}</span> {{ session.username }}
+                            </a>
+                        {% else %}
+                            <a href="/login.html" class="auth-btn">Вход</a>
+                        {% endif %}
                     </div>
-                    <a href="about.html" class="nav-link">О проекте</a>
-                    <a href="tags.html" class="nav-link">Теги</a>
-                </nav>
-                <div class="auth-section">
-                    <a href="login.html" class="auth-btn" id="authBtn">Вход</a>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="container">
-        <div class="breadcrumbs" id="breadcrumbs">
-            <a href="index.html">Главная</a> /
-            <a href="topics.html" id="categoryLink">Рецепты</a> /
-            <span id="postTitle">Бабушкина пицца на тонком тесте</span>
-        </div>
-
-        <div class="post-container" id="postContainer">
-            <div class="post-header-block">
-                <h1 class="post-title-main" id="postMainTitle">🍕 Бабушкина пицца на тонком тесте</h1>
-                <div id="postStatus" class="status-published">✓ Опубликовано</div>
+        <main class="container">
+            <div class="breadcrumbs" id="breadcrumbs">
+                <a href="/">Главная</a> 
+                <a href="topics.html" id="categoryLink">Рецепты</a>
+                <span id="postTitle">Бабушкина пицца на тонком тесте</span>
             </div>
 
-            <div class="post-meta-block">
-                <div>
-                    <span>Автор: <a href="profile.html" id="postAuthor" class="post-category-link">Елена_повар</a></span>
-                    <span> • </span>
-                    <span id="postDate">2 дня назад</span>
-                    <span> • </span>
-                    <span>Категория: <a href="topics.html" id="postCategory" class="post-category-link">Рецепты</a></span>
+            <div class="post-container" id="postContainer">
+                <div class="post-header-block">
+                    <h1 class="post-title-main" id="postMainTitle">{{ post.title }}</h1>
+                    <div id="postStatus" class="status-published">✓ Опубликовано</div>
                 </div>
-                <div class="likes-block">
-                    <span class="likes" id="postLikes">❤️ 24</span>
-                </div>
-            </div>
 
-            <div id="postTags" class="post-tags-block">
-                <a href="tag.html" class="tag">#пицца</a>
-                <a href="tag.html" class="tag">#итальянская</a>
-                <a href="tag.html" class="tag">#тесто</a>
-                <a href="tag.html" class="tag">#выпечка</a>
-            </div>
-
-            <div id="postContent" class="post-content">
-                <h3>Ингредиенты:</h3>
-                <ul>
-                    <li>Мука - 300 г</li>
-                    <li>Вода теплая - 180 мл</li>
-                    <li>Оливковое масло - 2 ст.л.</li>
-                    <li>Соль - 1 ч.л.</li>
-                    <li>Сахар - 1 ч.л.</li>
-                    <li>Дрожжи сухие - 5 г</li>
-                </ul>
-                <h3>Приготовление:</h3>
-                <p>1. Смешайте муку, соль, сахар и дрожжи.</p>
-                <p>2. Добавьте теплую воду и масло, замесите тесто.</p>
-                <p>3. Оставьте на 1 час в теплом месте.</p>
-                <p>4. Раскатайте тонко, выложите начинку.</p>
-                <p>5. Выпекайте 15 минут при 220°C.</p>
-                <p>Совет: для хрустящей корочки смажьте края оливковым маслом перед выпечкой.</p>
-            </div>
-
-            <div class="post-actions">
-                <button class="action-btn" id="likeButton">❤️ Поставить лайк</button>
-                <div class="author-buttons" id="authorButtons">
-                    <a href="edit-post.html" class="action-btn">✏️ Редактировать</a>
-                    <a href="#" class="action-btn delete-btn" id="deletePost">🗑️ Удалить</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="comments-section" id="commentsSection">
-            <h3 class="comments-title">Комментарии <span id="commentsCount">(12)</span></h3>
-            <div class="comments-list" id="commentsList"></div>
-            <div id="commentFormContainer" class="comment-form-container">
-                <h4>Добавить комментарий</h4>
-                <form id="commentForm">
-                    <div class="form-group">
-                        <textarea class="form-control" rows="4" placeholder="Напишите ваш комментарий..." id="commentText"></textarea>
+                <div class="post-meta-block">
+                    <div>
+                        <span>Автор: <a href="profile.html" id="postAuthor" class="post-category-link">{{ post.author_name }}</a></span>
+                        <span> • </span>
+                        <span id="postDate">{{ post.created_at.strftime('%Y-%m-%d') }}</span>
+                        <span> • </span>
+                        <span>Категория: <a href="topics.html" id="postCategory" class="post-category-link">{{ post.category_name or 'No Category' }}</a></span>
                     </div>
-                    <button type="submit" class="btn">Отправить</button>
-                </form>
-            </div>
-            <div id="loginToComment" class="login-message">
-                <p>Чтобы оставлять комментарии, <a href="login.html">войдите</a> или <a href="login.html">зарегистрируйтесь</a>.</p>
-            </div>
-        </div>
-
-
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Форум гурманов. Просто о вкусном.</p>
-        </div>
-    </footer>
-
-    <template id="commentTemplate">
-        <div class="comment-item" data-comment-id="">
-            <div class="comment-header">
-                <div>
-                    <strong><a href="profile.html" class="comment-author"></a></strong>
-                    <span class="comment-date"></span>
+                    <div class="likes-block">
+                        <span class="likes" id="postLikes">❤️ {{ post.like_count }}</span>
+                    </div>
                 </div>
-                <div><span class="comment-likes">❤️ 0</span></div>
+
+                <div id="postTags" class="post-tags-block">
+                    {% for tag in tags %}
+                        <a href="/tag/{{ tag.name }}" class="tag">#{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+
+                <div id="postContent" class="post-content">
+                    {{ post.content }}
+                </div>
+
+                <div class="post-actions">
+                    {% if not user_has_liked %}
+                        <form action="{{ url_for('like_post', post_id=post.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="action-btn">❤️ Поставить лайк</button>
+                        </form>
+                    {% else %}
+                        <span>✅ Вы оценили этот пост</span>
+                    {% endif %}
+                    {% if session.get('user_id') == post.author_id %}
+                        <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Удалить пост?');">
+                            <button type="submit" class="action-btn delete-btn">🗑️ Удалить</button>
+                        </form>
+                    {% endif %}
+                </div>
+                
             </div>
-            <p class="comment-body"></p>
-            <div class="comment-actions-block">
-                <button class="comment-likes-btn">❤️ Ответить</button>
-                <button class="comment-reply-btn">💬 Ответить</button>
+
+
+            <div class="comments-section" id="commentsSection">
+                <h3 class="comments-title">Комментарии  ({{ comments|length }})<span id="commentsCount">(12)</span></h3>
+                <div class="comment-item" data-comment-id="">
+                    <div class="comments-list" id="commentsList">
+                        {% for comment in comments %}
+                        <div class="comment-header">
+                                <div>
+                                    <strong><a class="comment-author">{{ comment.author_name }}</a></strong>
+                                    <span class="comment-date">{{ comment.created_at }}</span>
+                                </div>
+                            </div>
+                            <p class="comment-body">{{ comment.body }}</p>
+                            <div class="comment-actions-block">
+                                <button class="comment-reply-btn">💬 Ответить</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div id="commentFormContainer" class="comment-form-container">
+                    <h4>Добавить комментарий</h4>
+                    {% if session.get('user_id') %}
+                        <form action="{{ url_for('post_comment', post_id=post.id) }}" method="POST">
+                            <div class="form-group">
+                                <textarea 
+                                    name="comment_body" 
+                                    class="form-control" 
+                                    rows="4" 
+                                    placeholder="Напишите ваш комментарий..." 
+                                    required></textarea>
+                            </div>
+                            <button type="submit" class="btn">Отправить</button>
+                        </form>
+                    {% else %}
+                        <div class="auth-notice">
+                            <p>Пожалуйста, <a href="/login.html">войдите</a>, чтобы оставить комментарий.</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    </template>
 
-    <template id="relatedTemplate">
-        <div class="related-item">
-            <h4><a href="topic.html" class="related-title"></a></h4>
-            <div class="related-meta">
-                <span class="related-likes">❤️ 0</span>
-                <span class="related-comments">💬 0</span>
+
+        </main>
+
+        <footer>
+            <div class="container">
+                <p>&copy; 2026 Форум гурманов. Просто о вкусном.</p>
             </div>
-        </div>
-    </template>
+        </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuBtn = document.getElementById('menuBtn');
-            const menuDropdown = document.getElementById('menuDropdown');
-            if (menuBtn && menuDropdown) {
-                menuBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    menuDropdown.classList.toggle('show');
-                });
-                document.addEventListener('click', function(e) {
-                    if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
-                        menuDropdown.classList.remove('show');
-                    }
-                });
-                menuDropdown.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            }
-        });
 
-        let currentPostId = 1;
-        let isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-        let currentUserId = null;
+        <template id="relatedTemplate">
+            <div class="related-item">
+                <h4><a href="topic.html" class="related-title"></a></h4>
+                <div class="related-meta">
+                    <span class="related-likes">❤️ 0</span>
+                    <span class="related-comments">💬 0</span>
+                </div>
+            </div>
+        </template>
 
-        const mockPost = {
-            id: 1,
-            title: '🍕 Бабушкина пицца на тонком тесте',
-            content: `<h3>Ингредиенты:</h3><ul><li>Мука - 300 г</li><li>Вода теплая - 180 мл</li><li>Оливковое масло - 2 ст.л.</li><li>Соль - 1 ч.л.</li><li>Сахар - 1 ч.л.</li><li>Дрожжи сухие - 5 г</li></ul><h3>Приготовление:</h3><p>1. Смешайте муку, соль, сахар и дрожжи.</p><p>2. Добавьте теплую воду и масло, замесите тесто.</p><p>3. Оставьте на 1 час в теплом месте.</p><p>4. Раскатайте тонко, выложите начинку.</p><p>5. Выпекайте 15 минут при 220°C.</p><p>Совет: для хрустящей корочки смажьте края оливковым маслом перед выпечкой.</p>`,
-            author: 'Елена_повар',
-            authorId: 1,
-            date: '2 дня назад',
-            status: 'published',
-            category: 'Рецепты',
-            categoryId: 1,
-            tags: ['пицца', 'итальянская', 'тесто', 'выпечка'],
-            likes: 24,
-            commentsCount: 12
-        };
-
-        const mockComments = [
-            { id: 1, author: 'Антон_шеф', authorId: 5, date: 'вчера в 15:23', body: 'Спасибо за рецепт! Тесто действительно получилось очень тонким и хрустящим. Добавил еще щепотку итальянских трав — получилось бомбически!', likes: 5 },
-            { id: 2, author: 'Мама_Оля', authorId: 6, date: 'вчера в 18:40', body: 'А можно ли заменить обычную муку на цельнозерновую? Кто-нибудь пробовал?', likes: 2 },
-            { id: 3, author: 'Елена_повар', authorId: 1, date: 'вчера в 19:15', body: 'Мама_Оля, пробовала. Получается плотнее и менее хрустящее. Лучше смешать 50/50 с обычной мукой.', likes: 8 },
-            { id: 4, author: 'Поварёнок', authorId: 7, date: '5 часов назад', body: 'Сегодня попробую! Спасибо за подробный рецепт.', likes: 1 }
-        ];
-
-        const mockRelated = [
-            { id: 2, title: '🥗 Греческий салат: секретный ингредиент', likes: 17, comments: 8 },
-            { id: 4, title: '🥘 Паста карбонара без сливок', likes: 47, comments: 31 },
-            { id: 5, title: '🍰 Идеальный бисквит', likes: 32, comments: 15 }
-        ];
-
-        function loadPost() {
-            document.getElementById('postMainTitle').textContent = mockPost.title;
-            document.getElementById('postTitle').textContent = mockPost.title;
-            document.getElementById('postContent').innerHTML = mockPost.content;
-            document.getElementById('postAuthor').textContent = mockPost.author;
-            document.getElementById('postAuthor').href = `profile.html?id=${mockPost.authorId}`;
-            document.getElementById('postDate').textContent = mockPost.date;
-            document.getElementById('postCategory').textContent = mockPost.category;
-            document.getElementById('postCategory').href = `topics.html?category=${mockPost.categoryId}`;
-            document.getElementById('categoryLink').textContent = mockPost.category;
-            document.getElementById('categoryLink').href = `topics.html?category=${mockPost.categoryId}`;
-            document.getElementById('postLikes').innerHTML = `❤️ ${mockPost.likes}`;
-            const statusElement = document.getElementById('postStatus');
-            if (mockPost.status === 'published') {
-                statusElement.className = 'status-published';
-                statusElement.innerHTML = '✓ Опубликовано';
-            } else {
-                statusElement.className = 'status-draft';
-                statusElement.innerHTML = '✎ Черновик';
-            }
-            const tagsContainer = document.getElementById('postTags');
-            tagsContainer.innerHTML = '';
-            mockPost.tags.forEach(tag => {
-                const tagLink = document.createElement('a');
-                tagLink.href = `tag.html?tag=${tag}`;
-                tagLink.className = 'tag';
-                tagLink.textContent = `#${tag}`;
-                tagsContainer.appendChild(tagLink);
-            });
-        }
-
-        function loadComments() {
-            const commentsList = document.getElementById('commentsList');
-            commentsList.innerHTML = '';
-            mockComments.forEach(comment => commentsList.appendChild(createCommentElement(comment)));
-            document.getElementById('commentsCount').textContent = `(${mockComments.length})`;
-        }
-
-        function createCommentElement(comment) {
-            const template = document.getElementById('commentTemplate');
-            const el = template.content.cloneNode(true).querySelector('.comment-item');
-            el.dataset.commentId = comment.id;
-            const authorLink = el.querySelector('.comment-author');
-            authorLink.textContent = comment.author;
-            authorLink.href = `profile.html?id=${comment.authorId}`;
-            el.querySelector('.comment-date').textContent = comment.date;
-            el.querySelector('.comment-body').textContent = comment.body;
-            el.querySelector('.comment-likes').innerHTML = `❤️ ${comment.likes}`;
-            return el;
-        }
-
-        function loadRelatedPosts() {
-            const relatedList = document.getElementById('relatedList');
-            relatedList.innerHTML = '';
-            mockRelated.forEach(related => {
-                const template = document.getElementById('relatedTemplate');
-                const el = template.content.cloneNode(true).querySelector('.related-item');
-                const titleLink = el.querySelector('.related-title');
-                titleLink.textContent = related.title;
-                titleLink.href = `topic.html?id=${related.id}`;
-                el.querySelector('.related-likes').innerHTML = `❤️ ${related.likes}`;
-                el.querySelector('.related-comments').innerHTML = `💬 ${related.comments}`;
-                relatedList.appendChild(el);
-            });
-        }
-
-        function setupEventListeners() {
-            document.getElementById('likeButton').addEventListener('click', function() {
-                if (!isLoggedIn) { alert('Чтобы ставить лайки, нужно войти'); window.location.href = 'login.html'; return; }
-                const likesSpan = document.getElementById('postLikes');
-                let currentLikes = parseInt(likesSpan.textContent.match(/\d+/)[0]);
-                likesSpan.innerHTML = `❤️ ${currentLikes + 1}`;
-            });
-            document.getElementById('saveButton').addEventListener('click', function() {
-                if (!isLoggedIn) { alert('Чтобы сохранять посты, нужно войти'); window.location.href = 'login.html'; return; }
-                alert('Пост сохранен в закладки');
-            });
-            document.getElementById('shareButton').addEventListener('click', function() {
-                prompt('Скопируйте ссылку на пост:', window.location.href);
-            });
-            document.getElementById('deletePost').addEventListener('click', function(e) {
-                e.preventDefault();
-                if (confirm('Вы уверены, что хотите удалить этот пост?')) {
-                    alert('Пост удален');
-                    window.location.href = 'profile.html';
-                }
-            });
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                if (!isLoggedIn) { alert('Чтобы оставлять комментарии, нужно войти'); window.location.href = 'login.html'; return; }
-                const commentText = document.getElementById('commentText').value;
-                if (commentText.trim()) {
-                    alert('Комментарий добавлен');
-                    document.getElementById('commentText').value = '';
-                }
-            });
-        }
-
-        function checkAuth() {
-            const commentForm = document.getElementById('commentFormContainer');
-            const loginMessage = document.getElementById('loginToComment');
-            if (isLoggedIn) {
-                if (commentForm) commentForm.style.display = 'block';
-                if (loginMessage) loginMessage.style.display = 'none';
-            } else {
-                if (commentForm) commentForm.style.display = 'none';
-                if (loginMessage) loginMessage.style.display = 'block';
-            }
-        }
-
-        function updateAuthButton() {
-            const authBtn = document.getElementById('authBtn');
-            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-            const username = localStorage.getItem('username') || 'Елена_повар';
-            if (isLoggedIn) {
-                authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0)}</span> ${username}`;
-                authBtn.href = 'profile.html';
-                authBtn.classList.add('user-profile-btn');
-            } else {
-                authBtn.innerHTML = 'Вход';
-                authBtn.href = 'login.html';
-                authBtn.classList.remove('user-profile-btn');
-            }
-        }
-
-        loadPost();
-        loadComments();
-        loadRelatedPosts();
-        checkAuth();
-        setupEventListeners();
-        updateAuthButton();
-    </script>
-</body>
+    </body>
 </html>

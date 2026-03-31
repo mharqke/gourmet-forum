@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Новый пост - Форум гурманов</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
 </head>
 <body>
     <header>
@@ -17,7 +18,7 @@
                         <button class="nav-link dropbtn" id="menuBtn">Меню</button>
                         <div class="dropdown-content" id="menuDropdown">
                             <div class="dropdown-section">
-                                <span class="dropdown-section-title">🍲 Рецепты</span>
+                                <span class="dropdown-section-title"></span>
                                 <a href="topics.html?category=recipes&subcategory=home">Домашняя еда</a>
                                 <a href="topics.html?category=recipes&subcategory=cold">Холодные блюда</a>
                                 <a href="topics.html?category=recipes&subcategory=hot">Горячие блюда</a>
@@ -64,117 +65,47 @@
             <span>Новый пост</span>
         </div>
 
-        <div class="demo-notice">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-            </svg>
-            <div>
-                <strong>Режим демонстрации</strong><br>
-                Это заглушка страницы создания нового поста. После подключения backend'а здесь будет форма для добавления рецептов, вопросов и обсуждений.
-            </div>
-        </div>
 
         <h1>Создать новый пост</h1>
+        
 
         <div class="new-post-form">
-            <form id="newPostForm" onsubmit="event.preventDefault(); alert('Демо-режим: форма не отправляется');">
+            <form id="newTopicForm" method="POST" action="/create_post">
                 <div class="form-group">
-                    <label for="title">Заголовок <span class="required-star">*</span></label>
-                    <input type="text" id="title" class="form-control" placeholder="Например: Бабушкин рецепт борща" value="Тестовый заголовок">
+                    <label for="post-title">Заголовок  <span class="required-star">*</span></label>
+                    <input type="text" id="post-title" name="title" class="form-control" placeholder="Напишите краткий заголовок" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="category">Категория <span class="required-star">*</span></label>
-                    <select id="category" class="form-control" onchange="showSubcategories()">
-                        <option value="">-- Выберите категорию --</option>
-                        <option value="recipes" selected>🍲 Рецепты</option>
-                        <option value="discussions">🍷 Обсуждения</option>
-                        <option value="qa">❓ Вопрос-ответ</option>
+                    <label for="post-category">Категория <span class="required-star">*</span></label>
+                    <select id="post-category" name="category" class="form-control" required>
+                        <option value="" disabled selected>Выберите категорию</option>
+                        <option value="1">🏠 Домашняя еда</option>
+                        <option value="2">🥗 Холодные блюда</option>
+                        <option value="3">🍲 Горячие блюда</option>
+                        <option value="4">🍰 Десерты</option>
+                        <option value="5">🥖 Выпечка</option>
+                        <option value="6">🏨 Рестораны и кафе</option>
+                        <option value="7">🛒 Продукты</option>
+                        <option value="8">🔪 Кухонная техника</option>
+                        <option value="9">🎉 Гастро-события</option>
+                        <option value="10">👨‍🍳 Приготовление</option>
+                        <option value="11">🥕 Ингредиенты</option>
+                        <option value="12">🔄 Замена продуктов</option>
+                        <option value="13">❄️ Хранение</option>
                     </select>
                 </div>
 
-                <div id="subcategory-recipes" class="subcategory-group">
-                    <label>Выберите подкатегорию:</label>
-                    <div class="subcategory-options">
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="recipes-home" value="home" checked>
-                            <label for="recipes-home">🏠 Домашняя еда</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="recipes-cold" value="cold">
-                            <label for="recipes-cold">🥗 Холодные блюда</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="recipes-hot" value="hot">
-                            <label for="recipes-hot">🍲 Горячие блюда</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="recipes-desserts" value="desserts">
-                            <label for="recipes-desserts">🍰 Десерты</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="recipes-baking" value="baking">
-                            <label for="recipes-baking">🥖 Выпечка</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="subcategory-discussions" class="subcategory-group" style="display: none;">
-                    <label>Выберите подкатегорию:</label>
-                    <div class="subcategory-options">
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="discussions-restaurants" value="restaurants">
-                            <label for="discussions-restaurants">🏨 Рестораны и кафе</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="discussions-products" value="products">
-                            <label for="discussions-products">🛒 Продукты</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="discussions-kitchen" value="kitchen">
-                            <label for="discussions-kitchen">🔪 Кухонная техника</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="discussions-events" value="events">
-                            <label for="discussions-events">🎉 Гастро-события</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="subcategory-qa" class="subcategory-group" style="display: none;">
-                    <label>Выберите подкатегорию:</label>
-                    <div class="subcategory-options">
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="qa-cooking" value="cooking">
-                            <label for="qa-cooking">👨‍🍳 Приготовление</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="qa-ingredients" value="ingredients">
-                            <label for="qa-ingredients">🥕 Ингредиенты</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="qa-substitutes" value="substitutes">
-                            <label for="qa-substitutes">🔄 Замена продуктов</label>
-                        </div>
-                        <div class="subcategory-option">
-                            <input type="radio" name="subcategory" id="qa-storage" value="storage">
-                            <label for="qa-storage">❄️ Хранение</label>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="form-group">
-                    <label for="content">Содержание <span class="required-star">*</span></label>
-                    <textarea id="content" class="form-control" rows="8" placeholder="Опишите рецепт, задайте вопрос или поделитесь впечатлениями...">Это тестовое содержание поста. Здесь будет описание рецепта или вопрос.</textarea>
-                    <div class="hint">Можно использовать обычный текст. Поддерживаются ссылки и эмодзи 😊</div>
+                    <label for="post-content">Содержание <span class="required-star">*</span></label>
+                    <textarea id="post-content" name="content" class="form-control" rows="10" placeholder="Опишите ваш рецепт или вопрос..." required></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="tags">Теги</label>
-                    <input type="text" id="tags" class="form-control" placeholder="например: пицца, тесто, итальянская кухня" value="тест, демо, заглушка">
-                    <div class="hint">Введите теги через запятую. Они помогут другим найти ваш пост.</div>
+                    <input type="text" id="tags" name="tags" class="form-control" placeholder="например: пицца, тесто, итальянская кухня">
                 </div>
-
+                
                 <div class="popular-tags">
                     <span>Популярные теги:</span>
                     <a href="#" class="tag-link" onclick="addTag('#пицца'); return false;">#пицца</a>
@@ -185,21 +116,42 @@
                     <a href="#" class="tag-link" onclick="addTag('#завтрак'); return false;">#завтрак</a>
                 </div>
 
-                <div class="form-group">
-                    <label for="status">Статус</label>
-                    <select id="status" class="form-control">
-                        <option value="published" selected>✅ Опубликовать сразу</option>
-                        <option value="draft">📝 Сохранить в черновики</option>
-                    </select>
-                </div>
 
-                <div class="form-buttons">
-                    <button type="submit" class="btn" onclick="showSelectedData(); return false;">Опубликовать</button>
-                    <button type="button" class="btn-secondary" onclick="alert('Демо-режим: черновик сохранен');">Сохранить черновик</button>
+                <div class="form-actions">
+                    <button type="submit" class="btn">Опубликовать</button>
                     <a href="profile.html" class="btn-secondary">Отмена</a>
                 </div>
             </form>
         </div>
+
+<!-- <form method="POST" action="/create_post">
+    <div class="form-group">
+        <label for="category">Выберите категорию</label>
+        <select name="category" id="category" class="form-control" required>
+            <option value="Рецепты">🍲 Рецепты</option>
+            <option value="Обсуждения">🍷 Обсуждения</option>
+            <option value="Вопрос-ответ">❓ Вопрос-ответ</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="topic-title">Заголовок</label>
+        <input type="text" name="title" id="topic-title" class="form-control" required>
+    </div>
+
+    <div class="form-group">
+        <label for="topic-tags">Теги (через запятую)</label>
+        <input type="text" name="tags" id="topic-tags" class="form-control" placeholder="рецепт, ужин">
+    </div>
+
+    <div class="form-group">
+        <label for="topic-content">Содержание</label>
+        <textarea name="content" id="topic-content" class="form-control" rows="10" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-block">Опубликовать</button>
+</form> -->
+
 
         <div class="tips-card">
             <h3>📝 Советы по оформлению</h3>
@@ -267,21 +219,6 @@
             }
         }
 
-        function showSelectedData() {
-            const category = document.getElementById('category').value;
-            const categoryNames = {
-                'recipes': '🍲 Рецепты',
-                'discussions': '🍷 Обсуждения',
-                'qa': '❓ Вопрос-ответ'
-            };
-            let subcategory = '';
-            const selectedSubcategory = document.querySelector('input[name="subcategory"]:checked');
-            if (selectedSubcategory) {
-                const subcategoryLabel = document.querySelector(`label[for="${selectedSubcategory.id}"]`).textContent;
-                subcategory = `\nПодкатегория: ${subcategoryLabel}`;
-            }
-            alert(`Демо-режим: форма не отправляется\n\nВыбрано:\nКатегория: ${categoryNames[category] || 'не выбрана'}${subcategory}`);
-        }
 
         function updateAuthButton() {
             const authBtn = document.getElementById('authBtn');

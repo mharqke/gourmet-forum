@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Посты с тегом - Форум гурманов</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
 </head>
 <body>
     <header>
@@ -51,29 +52,37 @@
                     <a href="tags.html" class="nav-link">Теги</a>
                 </nav>
                 <div class="auth-section">
-                    <a href="login.html" class="auth-btn" id="authBtn">Вход</a>
+                    {% if session.get('user_id') %}
+                        <a href="/profile.html" class="auth-btn">
+                            <span class="user-avatar">{{ session.username[0] }}</span> {{ session.username }}
+                        </a>
+                    {% else %}
+                        <a href="/login.html" class="auth-btn">Вход</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <h1>Посты с тегом #пицца</h1>
-        <div class="card">
-            <h3><a href="topic.html?id=1" class="post-title-link">🍕 Бабушкина пицца на тонком тесте</a></h3>
-            <p>Делюсь проверенным рецептом теста, которое всегда получается хрустящим...</p>
-            <div class="tag-meta">Автор: Елена_повар • 2 дня назад</div>
-        </div>
-        <div class="card">
-            <h3><a href="topic.html?id=6" class="post-title-link">🍕 Маргарита за 15 минут</a></h3>
-            <p>Быстрый рецепт пиццы для тех, у кого мало времени...</p>
-            <div class="tag-meta">Автор: FastCook • 5 дней назад</div>
-        </div>
-        <div class="card">
-            <h3><a href="topic.html?id=7" class="post-title-link">🍕 Четыре сыра: идеальное сочетание</a></h3>
-            <p>Как подобрать сыры для настоящей пиццы четыре сыра...</p>
-            <div class="tag-meta">Автор: CheeseLover • неделю назад</div>
-        </div>
+        <h1>Посты с тегом #{{ tag_name }}</h1>
+        {% if posts %}
+            {% for post in posts %}
+                <div class="card">
+                    <h3>
+                        <a href="{{ url_for('view_topic', post_id=post.id) }}" class="post-title-link">
+                            {{ post.title }}
+                        </a>
+                    </h3>
+                    <p>{{ post.content[:150] }}...</p>
+                    <div class="tag-meta">
+                        Автор: {{ post.author_name }} • {{ post.created_at.strftime('%d.%m.%Y') }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Постов с таким тегом пока нет.</p>
+        {% endif %}
     </main>
 
     <footer>
@@ -101,21 +110,6 @@
                 });
             }
         });
-        function updateAuthButton() {
-            const authBtn = document.getElementById('authBtn');
-            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-            const username = localStorage.getItem('username') || 'Елена_повар';
-            if (isLoggedIn) {
-                authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0)}</span> ${username}`;
-                authBtn.href = 'profile.html';
-                authBtn.classList.add('user-profile-btn');
-            } else {
-                authBtn.innerHTML = 'Вход';
-                authBtn.href = 'login.html';
-                authBtn.classList.remove('user-profile-btn');
-            }
-        }
-        updateAuthButton();
     </script>
 </body>
 </html>
