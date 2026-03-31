@@ -17,6 +17,7 @@ db_config = {
     'password': os.environ.get('DB_PASSWORD')
 }
 
+
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
@@ -207,7 +208,7 @@ def create_post():
     # Get data from the form
     title = request.form.get('title')
     content = request.form.get('content')
-    category_name = request.form.get('category')  # Changed from subcategory
+    category_id = request.form.get('category')  # Changed from subcategory
     tags_raw = request.form.get('tags')
     author_id = session['user_id']
 
@@ -215,12 +216,6 @@ def create_post():
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # 1. Find the Category ID based on the name selected in the dropdown
-        cursor.execute("SELECT id FROM categories WHERE name = %s", (category_name,))
-        cat_result = cursor.fetchone()
-        
-        # If the category doesn't exist in DB, you might want to create it or set a default
-        category_id = cat_result['id'] if cat_result else None
 
         # 2. Insert the Post
         cursor.execute("""
@@ -408,8 +403,122 @@ def show_tag_posts(tag_id):
     conn.close()
 
     return render_template('tag.html', tag_name=tag['name'], posts=posts)
+# --- SINGLE TAG VIEW ROUTE ---
+@app.route('/topics/<int:category_id>')
+def show_category_posts(category_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
 
+    # 1. Get the category name for the header
+    cursor.execute("SELECT name, description FROM categories WHERE id = %s", (category_id,))
+    category = cursor.fetchone()
+    
+    if not category:
+        conn.close()
+        return "Category not found", 404
 
+    # 2. Get all posts associated with this category
+    query = """
+        SELECT p.*, u.username as author_name,
+               (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
+               (SELECT COUNT(*) FROM post_reactions WHERE post_id = p.id) as like_count
+        FROM posts p
+        JOIN users u ON p.author_id = u.id
+        WHERE p.category_id = %s AND p.status = 'published'
+        ORDER BY p.created_at DESC
+    """
+    cursor.execute(query, (category_id,))
+    posts = cursor.fetchall()
+    conn.close()
+
+    return render_template('topics.html', 
+                         category_name=category['name'], 
+                         category_description=category['description'],
+                         posts=posts,
+                         category_id=category_id)
+
+# --- CATEGORY ROUTES ---
+@app.route('/api/categories')
+def get_categories():
+    """Get all categories for dropdown menu"""
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, name, description FROM categories ORDER BY name")
+    categories = cursor.fetchall()
+    conn.close()
+    return categories
+
+@app.route('/api/posts/by_category/<int:category_id>')
+def get_posts_by_category(category_id):
+    """Get posts for a specific category with pagination and sorting"""
+    page = request.args.get('page', 1, type=int)
+    sort = request.args.get('sort', 'new', type=str)
+    per_page = 10
+    
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Get category info
+    cursor.execute("SELECT id, name, description FROM categories WHERE id = %s", (category_id,))
+    category = cursor.fetchone()
+    
+    if not category:
+        conn.close()
+        return {"error": "Category not found"}, 404
+    
+    # Build query based on sort parameter
+    order_by = {
+        'new': 'p.created_at DESC',
+        'popular': '(SELECT COUNT(*) FROM comments WHERE post_id = p.id) + (SELECT COUNT(*) FROM post_reactions WHERE post_id = p.id) DESC',
+        'likes': '(SELECT COUNT(*) FROM post_reactions WHERE post_id = p.id) DESC',
+        'comments': '(SELECT COUNT(*) FROM comments WHERE post_id = p.id) DESC'
+    }.get(sort, 'p.created_at DESC')
+    
+    # Get total count
+    cursor.execute("SELECT COUNT(*) as total FROM posts WHERE category_id = %s AND status = 'published'", (category_id,))
+    total = cursor.fetchone()['total']
+    
+    # Get posts with their details
+    offset = (page - 1) * per_page
+    query = f"""
+        SELECT p.*, u.username as author_name,
+               (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count,
+               (SELECT COUNT(*) FROM post_reactions WHERE post_id = p.id) as like_count,
+               GROUP_CONCAT(DISTINCT t.name) as tags
+        FROM posts p
+        JOIN users u ON p.author_id = u.id
+        LEFT JOIN thread_tags tt ON p.id = tt.post_id
+        LEFT JOIN tags t ON tt.tag_id = t.id
+        WHERE p.category_id = %s AND p.status = 'published'
+        GROUP BY p.id
+        ORDER BY {order_by}
+        LIMIT %s OFFSET %s
+    """
+    cursor.execute(query, (category_id, per_page, offset))
+    posts = cursor.fetchall()
+    
+    # Process tags for each post
+    for post in posts:
+        if post['tags']:
+            post['tags_list'] = post['tags'].split(',')
+        else:
+            post['tags_list'] = []
+    
+    conn.close()
+    
+    return {
+        "category": category,
+        "posts": posts,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "total_pages": (total + per_page - 1) // per_page
+    }
+
+@app.route('/topics')
+def topics():
+    """Serve topics page"""
+    return render_template('topics.html', session=session)
 
 
 
@@ -424,3 +533,5 @@ def serve_page(page):
         return render_template(page, session=session)
     return render_template('index.html', session=session)
 
+# if __name__ == "__main__":
+#     app.run(debug=True)

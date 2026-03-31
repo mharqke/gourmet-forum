@@ -18,32 +18,32 @@
                         <div class="dropdown-content" id="menuDropdown">
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🍲 Рецепты</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=home">Домашняя еда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=cold">Холодные блюда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=hot">Горячие блюда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=desserts">Десерты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=baking">Выпечка</a>
+                                <a href="{{ url_for('show_category_posts', category_id=1) }}">Домашняя еда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=2) }}">Холодные блюда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=3) }}">Горячие блюда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=4) }}">Десерты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=5) }}">Выпечка</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🍷 Обсуждения</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=restaurants">Рестораны и кафе</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=products">Продукты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=kitchen">Кухонная техника</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=events">Гастро-события</a>
+                                <a href="{{ url_for('show_category_posts', category_id=6) }}">Рестораны и кафе</a>
+                                <a href="{{ url_for('show_category_posts', category_id=7) }}">Продукты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=8) }}">Кухонная техника</a>
+                                <a href="{{ url_for('show_category_posts', category_id=9) }}">Гастро-события</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">❓ Вопрос-ответ</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=cooking">Приготовление</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=ingredients">Ингредиенты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=substitutes">Замена продуктов</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=storage">Хранение</a>
+                                <a href="{{ url_for('show_category_posts', category_id=10) }}">Приготовление</a>
+                                <a href="{{ url_for('show_category_posts', category_id=11) }}">Ингредиенты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=12) }}">Замена продуктов</a>
+                                <a href="{{ url_for('show_category_posts', category_id=13) }}">Хранение</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🏷️ Теги</span>
                                 <a href="{{ url_for('show_all_tags') }}">Все теги</a>
                                 <a href="{{ url_for('show_tag_posts', tag_id=1) }}">#пицца</a>
                                 <a href="{{ url_for('show_tag_posts', tag_id=2) }}">#паста</a>
-                                <a href="{{ url_for('show_tag_posts', tag_id=3) }}">#десерт</a>
+                                <a href="{{ url_for('show_tag_posts', tag_id=3) }}">#карбонара</a>
                             </div>
                         </div>
                     </div>
@@ -90,9 +90,22 @@
             <div class="about-quote">
                 "Представьте: вы заходите на форум и видите не бездушные тексты, а живые обсуждения. Здесь можно спросить совет у той самой бабушки, чей пирог уже хвалят в комментариях, или обсудить новый ресторан с теми, кто там действительно был."
             </div>
+            
+            <!-- Show join button only if user is NOT logged in -->
+            {% if not session.get('user_id') %}
             <div class="text-center mt-40">
-                <a href="login.html?tab=register" class="hero-cta">🍳 Присоединиться к сообществу</a>
+                <a href="{{ url_for('serve_page', page='login.html') }}?tab=register" class="hero-cta">🍳 Присоединиться к сообществу</a>
             </div>
+            {% else %}
+            <div class="text-center mt-40">
+                <div class="welcome-message">
+                    <h3>🍳 Добро пожаловать, {{ session.username }}!</h3>
+                    <p>Вы уже часть нашего сообщества. Делитесь рецептами, участвуйте в обсуждениях и помогайте другим гурманам!</p>
+                    <a href="{{ url_for('profile') }}" class="btn btn-primary">Перейти в профиль</a>
+                </div>
+            </div>
+            {% endif %}
+            
             <div class="echo-phrase mt-40">
                 Форум гурманов — где каждый рецепт становится вашим.
             </div>
@@ -124,21 +137,6 @@
                 });
             }
         });
-        function updateAuthButton() {
-            const authBtn = document.getElementById('authBtn');
-            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-            const username = localStorage.getItem('username') || 'Елена_повар';
-            if (isLoggedIn) {
-                authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0)}</span> ${username}`;
-                authBtn.href = 'profile.html';
-                authBtn.classList.add('user-profile-btn');
-            } else {
-                authBtn.innerHTML = 'Вход';
-                authBtn.href = 'login.html';
-                authBtn.classList.remove('user-profile-btn');
-            }
-        }
-        updateAuthButton();
     </script>
 </body>
 </html>

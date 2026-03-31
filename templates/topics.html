@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рецепты - Форум гурманов</title>
+    <title>Темы - Форум гурманов</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -18,32 +18,32 @@
                         <div class="dropdown-content" id="menuDropdown">
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🍲 Рецепты</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=home">Домашняя еда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=cold">Холодные блюда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=hot">Горячие блюда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=desserts">Десерты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=baking">Выпечка</a>
+                                <a href="{{ url_for('show_category_posts', category_id=1) }}">Домашняя еда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=2) }}">Холодные блюда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=3) }}">Горячие блюда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=4) }}">Десерты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=5) }}">Выпечка</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🍷 Обсуждения</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=restaurants">Рестораны и кафе</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=products">Продукты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=kitchen">Кухонная техника</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=events">Гастро-события</a>
+                                <a href="{{ url_for('show_category_posts', category_id=6) }}">Рестораны и кафе</a>
+                                <a href="{{ url_for('show_category_posts', category_id=7) }}">Продукты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=8) }}">Кухонная техника</a>
+                                <a href="{{ url_for('show_category_posts', category_id=9) }}">Гастро-события</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">❓ Вопрос-ответ</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=cooking">Приготовление</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=ingredients">Ингредиенты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=substitutes">Замена продуктов</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=storage">Хранение</a>
+                                <a href="{{ url_for('show_category_posts', category_id=10) }}">Приготовление</a>
+                                <a href="{{ url_for('show_category_posts', category_id=11) }}">Ингредиенты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=12) }}">Замена продуктов</a>
+                                <a href="{{ url_for('show_category_posts', category_id=13) }}">Хранение</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🏷️ Теги</span>
                                 <a href="{{ url_for('show_all_tags') }}">Все теги</a>
                                 <a href="{{ url_for('show_tag_posts', tag_id=1) }}">#пицца</a>
                                 <a href="{{ url_for('show_tag_posts', tag_id=2) }}">#паста</a>
-                                <a href="{{ url_for('show_tag_posts', tag_id=3) }}">#десерт</a>
+                                <a href="{{ url_for('show_tag_posts', tag_id=3) }}">#карбонара</a>
                             </div>
                         </div>
                     </div>
@@ -65,36 +65,75 @@
 
     <main class="container">
         <div class="breadcrumbs">
-            <a href="index.html">Главная</a> /
-            <span id="categoryName">Рецепты</span>
+            <a href="{{ url_for('home') }}">Главная</a> /
+            <span id="categoryName">Загрузка...</span>
         </div>
 
-        <div class="card category-info">
+        <div class="card category-info" id="categoryInfo" style="display: none;">
             <div class="category-header">
                 <div>
-                    <h2 id="categoryTitle">🍲 Рецепты</h2>
-                    <p id="categoryDescription">Делимся проверенными рецептами, спрашиваем советы, обсуждаем ингредиенты.</p>
+                    <h2 id="categoryTitle"></h2>
+                    <p id="categoryDescription"></p>
                 </div>
                 <div class="category-stats">
-                    <div class="posts-count" id="postsCount">15</div>
+                    <div class="posts-count" id="postsCount">0</div>
                     <div class="posts-count-label">постов</div>
                 </div>
             </div>
         </div>
-
-        <div class="topics-header">
-            <h1>Все посты в разделе</h1>
+        <div class="card category-info">
+            <div class="category-header">
+                <div>
+                    <h2>{{ category_name }}</h2>
+                    {% if category_description %}
+                        <p>{{ category_description }}</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
-        <div class="sort-buttons">
-            <a href="#" class="sort-btn active" id="sortNew">Сначала новые</a>
-            <a href="#" class="sort-btn" id="sortPopular">Популярные</a>
-            <a href="#" class="sort-btn" id="sortLikes">По лайкам</a>
-            <a href="#" class="sort-btn" id="sortComments">По комментариям</a>
+        <div class="sort-buttons" id="sortButtons" style="display: none;">
+            <a href="#" class="sort-btn active" data-sort="new">Сначала новые</a>
+            <a href="#" class="sort-btn" data-sort="popular">Популярные</a>
+            <a href="#" class="sort-btn" data-sort="likes">По лайкам</a>
+            <a href="#" class="sort-btn" data-sort="comments">По комментариям</a>
         </div>
 
-        <div id="postsList"></div>
+        <div id="postsList">
+    {% if posts %}
+        {% for post in posts %}
+            <div class="card">
+                <h3>
+                    <a href="{{ url_for('view_topic', post_id=post.id) }}" class="post-title-link">
+                        {{ post.title }}
+                    </a>
+                </h3>
+                {% if post.content %}
+                    <p class="post-excerpt">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
+                {% endif %}
+                <div class="post-meta">
+                    <span class="post-author">Автор: {{ post.author_name }}</span>
+                    <span class="post-date">{{ post.created_at.strftime('%d.%m.%Y %H:%M') if post.created_at else 'Дата неизвестна' }}</span>
+                    <span class="post-stats">
+                        <span class="post-comments">💬 {{ post.comment_count or 0 }}</span>
+                        <span class="post-likes">❤️ {{ post.like_count or 0 }}</span>
+                    </span>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            <p>Постов в категории "{{ category_name }}" пока нет.</p>
+        </div>
+    {% endif %}
+</div>
         <div id="pagination" class="pagination"></div>
+        
+        {% if session.get('user_id') %}
+        <div class="text-center mt-40">
+            <a href="{{ url_for('serve_page', page='new_topic.html') }}" class="hero-cta">➕ Создать новый пост</a>
+        </div>
+        {% endif %}
     </main>
 
     <footer>
@@ -107,11 +146,10 @@
         <div class="post-item" data-post-id="">
             <div class="post-item-inner">
                 <div class="post-item-content">
-                    <h3><a href="topic.html" class="post-title-link"></a></h3>
+                    <h3><a href="#" class="post-title-link"></a></h3>
                     <p class="post-meta">
-                        Автор: <a href="profile.html" class="post-author"></a> •
-                        <span class="post-date"></span> •
-                        <span class="post-status"></span>
+                        Автор: <a href="#" class="post-author"></a> •
+                        <span class="post-date"></span>
                     </p>
                     <p class="post-excerpt"></p>
                     <div class="post-tags"></div>
@@ -123,6 +161,10 @@
             </div>
         </div>
     </template>
+                                                               
+
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -143,136 +185,6 @@
                 });
             }
         });
-
-        let currentCategory = {
-            id: 1,
-            name: 'Рецепты',
-            description: 'Делимся проверенными рецептами, спрашиваем советы, обсуждаем ингредиенты.',
-            postsCount: 15
-        };
-        let currentPage = 1;
-        let currentSort = 'new';
-        let currentStatus = 'all';
-        let isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-
-        const mockPosts = [
-            { id: 1, title: '🍕 Бабушкина пицца на тонком тесте', author: 'Елена_повар', authorId: 1, date: '2 дня назад', statusClass: 'status-published', excerpt: 'Делюсь проверенным рецептом теста, которое всегда получается хрустящим.', tags: ['пицца', 'итальянская', 'тесто', 'выпечка'], commentsCount: 12, likesCount: 24, categoryId: 1 },
-            { id: 2, title: '🥗 Греческий салат: секретный ингредиент', author: 'Foodie88', authorId: 2, date: '5 дней назад', statusClass: 'status-published', excerpt: 'Все знают классический рецепт, но попробуйте добавить чуть-чуть орегано...', tags: ['салат', 'греческий', 'овощи', 'сыр'], commentsCount: 8, likesCount: 17, categoryId: 1 },
-            { id: 3, title: '🍣 Домашние роллы: эксперимент', author: 'SushiLover', authorId: 3, date: '3 часа назад', statusClass: 'status-draft', excerpt: 'Пробую новый рецепт риса для суши. Пока в процессе...', tags: ['суши', 'роллы', 'японская'], commentsCount: 2, likesCount: 3, categoryId: 1 },
-            { id: 4, title: '🥘 Паста карбонара без сливок', author: 'ChefItaliano', authorId: 4, date: 'неделю назад', statusClass: 'status-published', excerpt: 'Настоящая итальянская карбонара делается без сливок!', tags: ['паста', 'карбонара', 'итальянская'], commentsCount: 31, likesCount: 47, categoryId: 1 },
-            { id: 5, title: '🍰 Идеальный бисквит', author: 'Елена_повар', authorId: 1, date: '3 дня назад', statusClass: 'status-published', excerpt: 'Секрет пышного бисквита — правильно взбитые яйца...', tags: ['десерт', 'выпечка', 'бисквит'], commentsCount: 15, likesCount: 32, categoryId: 1 }
-        ];
-
-        function loadCategoryInfo() {
-            document.getElementById('categoryName').textContent = currentCategory.name;
-            document.getElementById('categoryTitle').innerHTML = `🍲 ${currentCategory.name}`;
-            document.getElementById('categoryDescription').textContent = currentCategory.description;
-            document.getElementById('postsCount').textContent = currentCategory.postsCount;
-        }
-
-        function loadPosts() {
-            const postsList = document.getElementById('postsList');
-            postsList.innerHTML = '';
-            let filteredPosts = mockPosts.filter(post => post.categoryId === currentCategory.id);
-            if (currentStatus !== 'all') filteredPosts = filteredPosts.filter(post => post.status === currentStatus);
-            filteredPosts = sortPosts(filteredPosts, currentSort);
-            filteredPosts.forEach(post => postsList.appendChild(createPostElement(post)));
-            updatePagination(filteredPosts.length);
-        }
-
-        function createPostElement(post) {
-            const template = document.getElementById('postTemplate');
-            const postElement = template.content.cloneNode(true).querySelector('.post-item');
-            postElement.dataset.postId = post.id;
-            const titleLink = postElement.querySelector('.post-title-link');
-            titleLink.textContent = post.title;
-            titleLink.href = `topic.html?id=${post.id}`;
-            const authorLink = postElement.querySelector('.post-author');
-            authorLink.textContent = post.author;
-            authorLink.href = `profile.html?id=${post.authorId}`;
-            postElement.querySelector('.post-date').textContent = post.date;
-            if (post.status === 'draft' && !isLoggedIn) postElement.style.display = 'none';
-            postElement.querySelector('.post-excerpt').textContent = post.excerpt;
-            const tagsContainer = postElement.querySelector('.post-tags');
-            post.tags.forEach(tag => {
-                const tagLink = document.createElement('a');
-                tagLink.href = `tag.html?tag=${tag}`;
-                tagLink.className = 'tag';
-                tagLink.textContent = `#${tag}`;
-                tagsContainer.appendChild(tagLink);
-            });
-            postElement.querySelector('.post-comments').innerHTML = `💬 ${post.commentsCount}`;
-            postElement.querySelector('.post-likes').innerHTML = `❤️ ${post.likesCount}`;
-            return postElement;
-        }
-
-        function sortPosts(posts, sortType) {
-            const sorted = [...posts];
-            if (sortType === 'popular') return sorted.sort((a, b) => (b.commentsCount + b.likesCount) - (a.commentsCount + a.likesCount));
-            if (sortType === 'likes') return sorted.sort((a, b) => b.likesCount - a.likesCount);
-            if (sortType === 'comments') return sorted.sort((a, b) => b.commentsCount - a.commentsCount);
-            return sorted;
-        }
-
-        function setupSortHandlers() {
-            document.getElementById('sortNew').addEventListener('click', e => { e.preventDefault(); updateSort('new', e.target); });
-            document.getElementById('sortPopular').addEventListener('click', e => { e.preventDefault(); updateSort('popular', e.target); });
-            document.getElementById('sortLikes').addEventListener('click', e => { e.preventDefault(); updateSort('likes', e.target); });
-            document.getElementById('sortComments').addEventListener('click', e => { e.preventDefault(); updateSort('comments', e.target); });
-        }
-
-        function updateSort(sortType, element) {
-            currentSort = sortType;
-            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            loadPosts();
-        }
-
-        function setupStatusFilters() {
-            document.querySelectorAll('input[name="status"]').forEach(radio => {
-                radio.addEventListener('change', function() { currentStatus = this.value; loadPosts(); });
-            });
-        }
-
-        function updatePagination(totalPosts) {
-            const pagination = document.getElementById('pagination');
-            const totalPages = Math.ceil(totalPosts / 10);
-            if (totalPages <= 1) { pagination.innerHTML = ''; return; }
-            let html = '<a href="#" class="page-link prev-page">←</a>';
-            for (let i = 1; i <= totalPages; i++) {
-                html += `<a href="#" class="page-link page-num ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</a>`;
-            }
-            html += '<a href="#" class="page-link next-page">→</a>';
-            pagination.innerHTML = html;
-            document.querySelectorAll('.page-num').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    currentPage = parseInt(this.dataset.page);
-                    loadPosts();
-                });
-            });
-        }
-
-        function updateAuthButton() {
-            const authBtn = document.getElementById('authBtn');
-            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-            const username = localStorage.getItem('username') || 'Елена_повар';
-            if (isLoggedIn) {
-                authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0)}</span> ${username}`;
-                authBtn.href = 'profile.html';
-                authBtn.classList.add('user-profile-btn');
-            } else {
-                authBtn.innerHTML = 'Вход';
-                authBtn.href = 'login.html';
-                authBtn.classList.remove('user-profile-btn');
-            }
-        }
-
-        loadCategoryInfo();
-        loadPosts();
-        setupSortHandlers();
-        setupStatusFilters();
-        updateAuthButton();
     </script>
 </body>
 </html>

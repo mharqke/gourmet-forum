@@ -18,32 +18,32 @@
                         <div class="dropdown-content" id="menuDropdown">
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🍲 Рецепты</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=home">Домашняя еда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=cold">Холодные блюда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=hot">Горячие блюда</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=desserts">Десерты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=recipes&subcategory=baking">Выпечка</a>
+                                <a href="{{ url_for('show_category_posts', category_id=1) }}">Домашняя еда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=2) }}">Холодные блюда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=3) }}">Горячие блюда</a>
+                                <a href="{{ url_for('show_category_posts', category_id=4) }}">Десерты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=5) }}">Выпечка</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🍷 Обсуждения</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=restaurants">Рестораны и кафе</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=products">Продукты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=kitchen">Кухонная техника</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=discussions&subcategory=events">Гастро-события</a>
+                                <a href="{{ url_for('show_category_posts', category_id=6) }}">Рестораны и кафе</a>
+                                <a href="{{ url_for('show_category_posts', category_id=7) }}">Продукты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=8) }}">Кухонная техника</a>
+                                <a href="{{ url_for('show_category_posts', category_id=9) }}">Гастро-события</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">❓ Вопрос-ответ</span>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=cooking">Приготовление</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=ingredients">Ингредиенты</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=substitutes">Замена продуктов</a>
-                                <a href="{{ url_for('serve_page', page='topics.html') }}?category=qa&subcategory=storage">Хранение</a>
+                                <a href="{{ url_for('show_category_posts', category_id=10) }}">Приготовление</a>
+                                <a href="{{ url_for('show_category_posts', category_id=11) }}">Ингредиенты</a>
+                                <a href="{{ url_for('show_category_posts', category_id=12) }}">Замена продуктов</a>
+                                <a href="{{ url_for('show_category_posts', category_id=13) }}">Хранение</a>
                             </div>
                             <div class="dropdown-section">
                                 <span class="dropdown-section-title">🏷️ Теги</span>
                                 <a href="{{ url_for('show_all_tags') }}">Все теги</a>
                                 <a href="{{ url_for('show_tag_posts', tag_id=1) }}">#пицца</a>
                                 <a href="{{ url_for('show_tag_posts', tag_id=2) }}">#паста</a>
-                                <a href="{{ url_for('show_tag_posts', tag_id=3) }}">#десерт</a>
+                                <a href="{{ url_for('show_tag_posts', tag_id=3) }}">#карбонара</a>
                             </div>
                         </div>
                     </div>
@@ -66,12 +66,12 @@
     <main class="container">
 
         <div class="profile-header">
-            <!-- Аватар в виде первой буквы имени -->
             <div class="profile-avatar" id="profileAvatar">
                 <span id="avatarInitial">Е</span>
             </div>
             <div class="profile-info">
                 <h1>{{ user.username }}</h1>
+                <p class="meta">На форуме с: {{ user.created_at }}</p>
                 <div class="profile-stats">
                     <div class="stat-card">
                         <span class="stat-value">{{ liked_posts.__len__() }}</span>
@@ -85,10 +85,6 @@
                         <span class="stat-value">{{ comment_count }}</span>
                         <span class="stat-label">комментариев</span>
                     </div>
-                    <div class="stat-card">
-                        <span class="stat-value">234</span>
-                        <span class="stat-label">подписчиков</span>
-                    </div>
                 </div>
                 <div class="profile-extra">
                     <p><strong>📍 Город:</strong>{{ user.city or 'Город не указан' }}</p>
@@ -100,7 +96,6 @@
         <div class="profile-tabs">
             <a href="#" class="active tab" onclick="switchTab('posts'); return false;">📝 Мои посты</a>
             <a href="#" class="tab" onclick="switchTab('liked'); return false;">❤️ Понравившееся</a>
-            <a href="#" class="tab" onclick="switchTab('subscribers'); return false;">👥 Подписчики</a>
             <a href="#" class="tab" onclick="switchTab('settings'); return false;">⚙️ Настройки</a>
         </div>
 
@@ -270,7 +265,6 @@
         function switchTab(tabName) {
             document.getElementById('posts-tab').style.display = 'none';
             document.getElementById('liked-tab').style.display = 'none';
-            document.getElementById('subscribers-tab').style.display = 'none';
             document.getElementById('settings-tab').style.display = 'none';
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             if (tabName === 'posts') {
@@ -279,12 +273,9 @@
             } else if (tabName === 'liked') {
                 document.getElementById('liked-tab').style.display = 'block';
                 document.querySelector('.tab:nth-child(2)').classList.add('active');
-            } else if (tabName === 'subscribers') {
-                document.getElementById('subscribers-tab').style.display = 'block';
-                document.querySelector('.tab:nth-child(3)').classList.add('active');
             } else if (tabName === 'settings') {
                 document.getElementById('settings-tab').style.display = 'block';
-                document.querySelector('.tab:nth-child(4)').classList.add('active');
+                document.querySelector('.tab:nth-child(3)').classList.add('active');
             }
         }
 
