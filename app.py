@@ -424,7 +424,3 @@ def serve_page(page):
         return render_template(page, session=session)
     return render_template('index.html', session=session)
 
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
