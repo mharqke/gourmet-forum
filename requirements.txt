@@ -6,4 +6,4 @@ python-dotenv
 Werkzeug
 mysql-connector-python
 mysql.connector
-from werkzeug
+werkzeug
