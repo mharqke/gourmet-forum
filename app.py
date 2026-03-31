@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash # Added check_password_hash
 from datetime import datetime
-
+import os
 
 
 app = Flask(__name__)
@@ -10,11 +10,11 @@ app.secret_key = 'your_secret_key_here'
 
 # Database Configuration (as provided in structure.txt)
 db_config = {
-    'host': 'quolimeplise.beget.app',
-    'port': 3306,
-    'database': 'gourments_db',
-    'user': 'gourments_db',
-    'password': 'F5DaC%wOznFW'
+    'host': os.environ.get('DB_HOST'),
+    'port': int(os.environ.get('DB_PORT', 3306)),
+    'database': os.environ.get('DB_NAME'),
+    'user': os.environ.get('DB_USER'),
+    'password': os.environ.get('DB_PASSWORD')
 }
 
 def get_db_connection():
