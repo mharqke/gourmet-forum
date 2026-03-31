@@ -51,7 +51,13 @@
                     <a href="tags.html" class="nav-link">Теги</a>
                 </nav>
                 <div class="auth-section">
-                    <a href="login.html" class="auth-btn" id="authBtn">Вход</a>
+                    {% if session.get('user_id') %}
+                        <a href="/profile.html" class="auth-btn">
+                            <span class="user-avatar">{{ session.username[0] }}</span> {{ session.username }}
+                        </a>
+                    {% else %}
+                        <a href="/login.html" class="auth-btn">Вход</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -74,15 +80,14 @@
                 </form>
 
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}" style="color: green; margin-top: 10px; text-align: center;">
-                        {{ message }}
-                    </div>
-                    {% endfor %}
-                {% endif %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert" style="color: red; margin-top: 10px; text-align: center;">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
                 {% endwith %}
-
                 <div class="text-center mt-20">
                     <small class="text-muted">Нет аккаунта? <a href="register.html">Зарегистрироваться</a></small>
                 </div>
@@ -97,58 +102,43 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuBtn = document.getElementById('menuBtn');
-            const menuDropdown = document.getElementById('menuDropdown');
-            if (menuBtn && menuDropdown) {
-                menuBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    menuDropdown.classList.toggle('show');
-                });
-                document.addEventListener('click', function(e) {
-                    if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
-                        menuDropdown.classList.remove('show');
-                    }
-                });
-                menuDropdown.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            }
-        });
-
-        document.getElementById('loginFormElement').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            if (email && password) {
-                localStorage.setItem('userLoggedIn', 'true');
-                localStorage.setItem('username', email.split('@')[0] || 'Пользователь');
-                alert('Добро пожаловать!');
-                window.location.href = 'index.html';
-            } else {
-                alert('Заполните все поля');
-            }
-        });
-
-        function updateAuthButton() {
-            const authBtn = document.getElementById('authBtn');
-            
-            // Check if Flask passed a username to the template
-            // We use Jinja2 syntax inside the script:
-            const username = "{{ session.get('username', '') }}";
-            const isLoggedIn = username !== "";
-
-            if (isLoggedIn) {
-                authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0)}</span> ${username}`;
-                authBtn.href = 'profile.html';
-                authBtn.classList.add('user-profile-btn');
-            } else {
-                authBtn.innerHTML = 'Вход';
-                authBtn.href = 'login.html';
-                authBtn.classList.remove('user-profile-btn');
-            }
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('menuBtn');
+        const menuDropdown = document.getElementById('menuDropdown');
+        if (menuBtn && menuDropdown) {
+            menuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                menuDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', function(e) {
+                if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+                    menuDropdown.classList.remove('show');
+                }
+            });
+            menuDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         }
-        updateAuthButton();
-    </script>
+    });
+
+    // Function to update auth button based on session
+    function updateAuthButton() {
+        const authBtn = document.getElementById('authBtn');
+        
+        // Flask injects the username here if the user is logged in
+        const username = "{{ session.get('username', '') }}";
+
+        if (username !== "") {
+            authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0)}</span> ${username}`;
+            authBtn.href = 'profile.html';
+            authBtn.classList.add('user-profile-btn');
+        } else {
+            authBtn.innerHTML = 'Вход';
+            authBtn.href = 'login.html';
+            authBtn.classList.remove('user-profile-btn');
+        }
+    }
+    updateAuthButton();
+</script>
 </body>
 </html>

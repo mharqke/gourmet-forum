@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Теги - Форум гурманов</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
@@ -52,7 +51,13 @@
                     <a href="tags.html" class="nav-link">Теги</a>
                 </nav>
                 <div class="auth-section">
-                    <a href="login.html" class="auth-btn" id="authBtn">Вход</a>
+                    {% if session.get('user_id') %}
+                        <a href="/profile.html" class="auth-btn">
+                            <span class="user-avatar">{{ session.username[0] }}</span> {{ session.username }}
+                        </a>
+                    {% else %}
+                        <a href="/login.html" class="auth-btn">Вход</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Рецепты - Форум гурманов</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
@@ -52,7 +51,13 @@
                     <a href="tags.html" class="nav-link">Теги</a>
                 </nav>
                 <div class="auth-section">
-                    <a href="login.html" class="auth-btn" id="authBtn">Вход</a>
+                    {% if session.get('user_id') %}
+                        <a href="/profile.html" class="auth-btn">
+                            <span class="user-avatar">{{ session.username[0] }}</span> {{ session.username }}
+                        </a>
+                    {% else %}
+                        <a href="/login.html" class="auth-btn">Вход</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -79,7 +84,6 @@
 
         <div class="topics-header">
             <h1>Все посты в разделе</h1>
-            <a href="new_topic.html" class="btn">➕ Новый пост</a>
         </div>
 
         <div class="sort-buttons">
@@ -87,19 +91,6 @@
             <a href="#" class="sort-btn" id="sortPopular">Популярные</a>
             <a href="#" class="sort-btn" id="sortLikes">По лайкам</a>
             <a href="#" class="sort-btn" id="sortComments">По комментариям</a>
-        </div>
-
-        <div class="status-filter">
-            <span class="filter-label">Показать:</span>
-            <label class="filter-radio">
-                <input type="radio" name="status" value="all" checked> Все
-            </label>
-            <label class="filter-radio">
-                <input type="radio" name="status" value="published"> Только опубликованные
-            </label>
-            <label class="filter-radio">
-                <input type="radio" name="status" value="draft"> Черновики (мои)
-            </label>
         </div>
 
         <div id="postsList"></div>

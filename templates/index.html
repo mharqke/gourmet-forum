@@ -95,6 +95,8 @@
         </div>
     </footer>
 
+    <!-- Modal will only show if user is NOT logged in -->
+    {% if not session.get('user_id') %}
     <div id="welcomeModal" class="modal-overlay">
         <div class="modal-container">
             <button id="closeModal" class="modal-close">&times;</button>
@@ -104,8 +106,13 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <script>
+        // Flask session data injected directly into JavaScript
+        const isLoggedIn = "{{ 'true' if session.get('user_id') else 'false' }}";
+        const username = "{{ session.get('username', '') }}";
+        
         document.addEventListener('DOMContentLoaded', function() {
             const menuBtn = document.getElementById('menuBtn');
             const menuDropdown = document.getElementById('menuDropdown');
@@ -123,51 +130,55 @@
                     e.stopPropagation();
                 });
             }
-        });
-
-        window.addEventListener('load', function() {
-            const modalClosed = localStorage.getItem('welcomeModalClosed');
-            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-            if (!modalClosed && !isLoggedIn) {
-                document.getElementById('welcomeModal').style.display = 'flex';
+            
+            // Update auth button based on Flask session
+            updateAuthButton();
+            
+            // Handle welcome modal
+            const modal = document.getElementById('welcomeModal');
+            if (modal && !isLoggedIn) {
+                // Check if modal was closed in this session
+                const modalClosed = sessionStorage.getItem('welcomeModalClosed');
+                if (!modalClosed) {
+                    modal.style.display = 'flex';
+                }
             }
-            updateAuthButton();
         });
-
-        document.getElementById('guestButton').addEventListener('click', function() {
-            document.getElementById('welcomeModal').style.display = 'none';
-            localStorage.setItem('welcomeModalClosed', 'guest');
-            updateAuthButton();
-        });
-
-        document.getElementById('closeModal').addEventListener('click', function() {
-            document.getElementById('welcomeModal').style.display = 'none';
-            localStorage.setItem('welcomeModalClosed', 'closed');
-        });
-
+        
+        // Handle modal close if modal exists
+        const closeModalBtn = document.getElementById('closeModal');
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', function() {
+                const modal = document.getElementById('welcomeModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    sessionStorage.setItem('welcomeModalClosed', 'closed');
+                }
+            });
+        }
+        
+        // Close modal when clicking outside
         window.addEventListener('click', function(e) {
             const modal = document.getElementById('welcomeModal');
-            if (e.target === modal) {
+            if (modal && e.target === modal) {
                 modal.style.display = 'none';
-                localStorage.setItem('welcomeModalClosed', 'closed');
+                sessionStorage.setItem('welcomeModalClosed', 'closed');
             }
         });
         
         function updateAuthButton() {
             const authBtn = document.getElementById('authBtn');
-            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-            const username = localStorage.getItem('username') || 'Елена_повар';
-            if (isLoggedIn) {
-                authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0)}</span> ${username}`;
-                authBtn.href = 'profile.html';
+            
+            if (isLoggedIn && username) {
+                authBtn.innerHTML = `<span class="user-avatar">${username.charAt(0).toUpperCase()}</span> ${username}`;
+                authBtn.href = "{{ url_for('profile') }}";
                 authBtn.classList.add('user-profile-btn');
             } else {
                 authBtn.innerHTML = 'Вход';
-                authBtn.href = 'login.html';
+                authBtn.href = "{{ url_for('serve_page', page='login.html') }}";
                 authBtn.classList.remove('user-profile-btn');
             }
         }
-        updateAuthButton();
     </script>
 </body>
 </html>

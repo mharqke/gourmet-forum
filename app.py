@@ -1,16 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash # Added check_password_hash
+from datetime import datetime
+
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
 # Database Configuration (as provided in structure.txt)
 db_config = {
-    "host": "sql7.freesqldatabase.com",
-    "user": "sql7821169",
-    "password": "Xv2uvZTRyU",
-    "database": "sql7821169"
+    'host': 'quolimeplise.beget.app',
+    'port': 3306,
+    'database': 'gourments_db',
+    'user': 'gourments_db',
+    'password': 'F5DaC%wOznFW'
 }
 
 def get_db_connection():
@@ -19,26 +23,28 @@ def get_db_connection():
 # --- LOGIN LOGIC ---
 @app.route('/login_user', methods=['POST'])
 def login_user():
-    identifier = request.form.get('identifier') # Can be username or email
+    # 'identifier' matches the 'name' attribute in our HTML input
+    identifier = request.form.get('identifier') 
     password = request.form.get('password')
     
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Search for user by username OR email (based on your init.sql structure)
-    query = "SELECT * FROM users WHERE username = %s OR email = %s;"
+    # Search by username OR email
+    query = "SELECT * FROM users WHERE username = %s OR email = %s"
     cursor.execute(query, (identifier, identifier))
     user = cursor.fetchone()
     conn.close()
 
+    # Verify user exists and password is correct
     if user and check_password_hash(user['password_hash'], password):
-        # Store user info in Flask session
+        # Create a session to keep the user logged in
         session['user_id'] = user['id']
         session['username'] = user['username']
-        flash(f'Welcome back, {user["username"]}!', 'success')
         return redirect('/index.html')
     else:
-        flash('Invalid username/email or password', 'error')
+        # Send an error message back to the login page
+        flash('Неверное имя пользователя или пароль', 'error')
         return redirect('/login.html')
 
 # --- REGISTRATION LOGIC ---
@@ -59,8 +65,10 @@ def register_user():
 
     hashed_pw = generate_password_hash(password)
     try:
-        query = "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)"
-        cursor.execute(query, (username, email, hashed_pw))
+        # Using Python datetime
+        current_time = datetime.now()
+        query = "INSERT INTO users (username, email, password_hash, created_at) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (username, email, hashed_pw, current_time))
         conn.commit()
         flash('Registration successful! Please log in.', 'success')
     except Exception as e:
@@ -100,7 +108,7 @@ def profile():
     cursor.execute("SELECT COUNT(*) as count FROM posts WHERE author_id = %s", (user_id,))
     post_count = cursor.fetchone()['count']
     
-    cursor.execute("SELECT COUNT(*) as count FROM comments WHERE author_id = %s", (user_id,))
+    cursor.execute("SELECT COUNT(*) as count FROM comments WHERE user_id = %s", (user_id,))
     comment_count = cursor.fetchone()['count']
 
 
@@ -116,7 +124,7 @@ def profile():
         FROM posts p
         LEFT JOIN comments c ON p.id = c.post_id
         LEFT JOIN post_reactions l ON p.id = l.post_id
-        LEFT JOIN post_tags pt ON p.id = pt.post_id
+        LEFT JOIN thread_tags pt ON p.id = pt.post_id
         LEFT JOIN tags t ON pt.tag_id = t.id
         WHERE p.author_id = %s
         GROUP BY p.id
@@ -139,7 +147,7 @@ def profile():
         GROUP BY p.id
     """, (user_id,))
     liked_posts = cursor.fetchall()
-
+    
     conn.close()
     return render_template('profile.html', 
                            posts=my_posts, 
@@ -413,9 +421,10 @@ def home():
 @app.route('/<page>')
 def serve_page(page):
     if page.endswith('.html'):
-        # Pass session data to templates so they know if a user is logged in
         return render_template(page, session=session)
-    return render_template('index.html')
+    return render_template('index.html', session=session)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
